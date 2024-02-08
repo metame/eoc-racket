@@ -1,7 +1,9 @@
 #lang racket
 
-(require racket/fixnum)
+(provide ast1.1)
+
 (require "compiler.rkt")
+(require (prefix-in u: "public-student-support-code/utilities.rkt"))
 
 (define rd (Prim 'read '()))
 
@@ -44,21 +46,12 @@
                 (Prim '- (list (Prim 'read '())
                                (Prim '+ (list (Int 8)))))))
 
-(define (interp-exp e)
-  (match e
-    [(Int n) n]
-    [(Prim 'read '())
-     (define r (read))
-     (cond [(fixnum? r) r]
-           [else (error 'interp-exp "read expected an integer" r)])]
-    [(Prim '- (list e))
-     (define v (interp-exp e))
-     (fx- 0 v)]
-    [(Prim '+ (list e1 e2))
-     (define v1 (interp-exp e1))
-     (define v2 (interp-exp e2))
-     (fx+ v1 v2)]))
+(println (pe-Rint (Program '() (Prim '+ (list (Int 10) (Int 32))))))
 
-(define (interp-Rint p)
-  (match p
-    [(Program '() e) (interp-exp e)]))
+(define (compile filename)
+  (let* ([ast (u:read-program "program.rkt")]
+         [_ (println ast)]
+         [out (pe-Rint ast)])
+    out))
+
+(compile "program.rkt")
