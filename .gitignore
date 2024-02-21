@@ -1,2 +1,4 @@
 public-student-support-code
 .#1.1.rkt
+*.o
+*.s
