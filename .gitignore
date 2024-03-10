@@ -1,4 +1,6 @@
-public-student-support-code
-.#1.1.rkt
+public-student-support-code/*
+!public-student-support-code/compiler.rkt
+!public-student-support-code/tests
+
 *.o
 *.s
