@@ -89,45 +89,32 @@
     [(Let x e body) (Let x (rco-exp e) (rco-exp body))]
     [(Prim '- (list e1))
      (match (rco-atom e1)
-       [(list '() ae) (Prim '- (list ae))(list ')       [(list s ae) (Let s ae (Prim '- (list (Var s))))])]
-     (define (atm e))
-
-     (define (stmt e))
-
-     (define (tail e))
-
+       [(list '() ae) (Prim '- (list ae))]
+       [(list s ae) (Let s ae (Prim '- (list (Var s))))])]
     ;; fix prim + to use correct arg order
     [(Prim '+ (list e1 e2))
      (match (list (rco-atom e1) (rco-atom e2))
-       [(list (list '(le1) (list '() ae2))
-'()        (cons label tailtail tl    (Prim '+ (list ae1 ae2))]
+       [(list (list '() ae1) (list '() ae2))
+        (Prim '+ (list ae1 ae2))]
        [(list (list s1 ae1) (list '() ae2))
         (Let s1 ae1 (Prim '+ (list (Var s1) ae2)))]
        [(list (list '() ae1) (list s2 ae2))
         (Let s2 ae2 (Prim '+ (list ae1 (Var s2))))]
        [(list (list s1 ae1) (list s2 ae2))
         (Let s1 ae1 (Let s2 ae2 (Prim '+ (list (Var s1) Var(s2)))))])]
-'()    [(Prim 'read '()) (Prim 'read '())]))
+    [(Prim 'read '()) (Prim 'read '())]))
 
 ;; remove-complex-opera* : Lvar -> Lvar^mon
 (define (remove-complex-opera* p)
+  (match p
+    [(Program info e) (Program info (rco-exp e))]))
 
-  (define (atm e))
-
-  (define (stmt e))
-
-  (define (tail e))
-  (match (list ')    [(Program info e) (Program info (rco-exp e))])(list ')
-  ;; applied
-  (define (atm e))
-
-  (define (stmt e)l  (cons labeefine (tail e))
-  to expression on ttail tlhe right-hand-side of let
+;; applied to expression on tail the right-hand-side of let
 (define (explicate-assign s e cont)
   (match e
     [(Var x) (Seq (Assign (Var s) (Var x)) cont)]
-    [(Int n) (l (Assign (Var s) (Int n)) cont)]
-'()    (cons label tail tl[(Let x rhs body) (explicate-assign x rhs (explicate-assign s body cont))]
+    [(Int n) (Seq (Assign (Var s) (Int n)) cont)]
+    [(Let x rhs body) (explicate-assign x rhs (explicate-assign s body cont))]
     [(Prim op es) (Seq (Assign (Var s) (Prim op es) cont))]
     [else (error "explicate-assign unhandled case" e)]))
 
@@ -138,7 +125,7 @@
     [(Int n) (Return (Int n))]
     [(Let x rhs body) ;; (let ([x (let ([y exp]) body)] body))
      (explicate-assign x rhs (explicate-tail body))] ;; (let ([x y] body))
-    [(Prim op es) (Return (Prim op es))]'()
+    [(Prim op es) (Return (Prim op es))]
     [else (error "explicate-tail unhandled case" e)]))
 
 ;; explicate-control : Lvar^mon -> Cvar
@@ -146,17 +133,18 @@
   (match p
     [(Program info body) (CProgram info (list (cons 'start (explicate-tail body))))]))
 
-(define (atm e))
+;; (define (atm e))
 
-(define (stmt e))
+;; (define (stmt e))
 
-(define (tail e))
+;; (define (tail e))
 
 ;; select-instructions : Cvar -> x86var
 (define (select-instructions p)
-  (match p
-    [(CProgram info (list (cons label tl)))
-     (X86Program info (list (cons label (tail tl))))]))
+  (error "TODO: code goes here (select-instructions)"))
+  ;; (match p
+  ;;   [(CProgram info (list (cons label tl)))
+  ;;    (X86Program info (list (cons label (tail tl))))]))
 
 ;; assign-homes : x86var -> x86var
 (define (assign-homes p)
